@@ -42,7 +42,7 @@ menu:
 #      url: /about/
  #     weight: 2
     - name: GitHub
-      url: https://github.com/clarewest
+      url: https://github.com/llq0325
       weight: 2
     - name: Twitter
       url: https://twitter.com/claree_west
