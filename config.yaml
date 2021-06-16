@@ -1,5 +1,5 @@
-baseurl: https://clarewest.github.io/blog/
-title: Clare's Blog
+baseurl: https://github.com/llq0325/page
+title: LLQ's Blog
 author: CE West
 canonifyurls: yes
 languagecode: en
@@ -24,7 +24,7 @@ params:
     - python
     - stan
   progressively: no
-  sitename: Clare's Blog
+  sitename: LLQ's Blog
   uselatex: yes
   twitter: claree_west
   logofile: images/favicon.png
