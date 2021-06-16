@@ -1,0 +1,235 @@
+---
+title: rstudio::global(2021) %>% summarise()
+author: CE West
+date: '2021-01-25'
+slug: rstudio-global-2021-summarise
+categories:
+  - R
+tags:
+  - rstudio
+  - conference
+  - shiny
+  - tidyverse
+  - dataviz
+description: Summary of the talks I attended at rstudio's 2021 conference
+meta_img: images/hex_wall.png
+
+---
+
+
+
+<p>rstudio’s annual conference went online and global this year, which meant that I could attend for the first time. There were lots of interesting talks, and it was great to see familiar faces from GitHub/Twitter avatars come to life! This is a summary of the notes I took during the talks I attended, I will add links to the full talks on the rstudio website when they become available.</p>
+<style type="text/css">
+h2, .h2, h3, .h3 {
+    margin-top: 30px;
+}
+
+h4, .h4, h5, .h5 {
+    margin-top: 30px;
+}
+
+</style>
+<ul>
+<li><a href="#speeding-up-shiny">Speeding up Shiny, <em>Pedro Silva</em></a></li>
+<li><a href="#shiny-open-source">Shiny Open Source, <em>Dominik Krzemiński</em></a></li>
+<li><a href="#shiny-best-practices">Best practices in developing Shiny apps, <em>Olga Mierzwa-Sulima</em></a></li>
+<li><a href="#scaling-shiny">Scaling Shiny to thousands of users, <em>Damian Rodziewicz</em></a></li>
+<li><a href="#maintaining-the-tidyverse">Maintaining the house the tidyverse built, <em>Hadley Wickham</em></a></li>
+<li><a href="#ggplot-misunderstandings">Always look on the bright side of plots, <em>Kara Woo</em></a></li>
+<li><a href="#trial-and-error-dataviz-at-ACLU">Trial and error in data viz at the ACLU, <em>Sophie Beiers</em></a></li>
+<li><a href="#sql-and-r">SQL &amp; R: The dynamic duo, <em>Irene Steves</em></a></li>
+<li><a href="#visualising-the-pandemic">Reporting on and visualising the pandemic, <em>John Burn-Murdoch</em></a></li>
+<li><a href="#whats-new-in-tidymodels">What’s new in tidymodels, <em>Max Kuhn</em></a></li>
+<li><a href="#making-shiny-apps-faster-with-caching">Making Shiny apps faster with caching, <em>Winston Chang</em></a></li>
+<li><a href="#disk-frame">Easy larger-than-RAM data manipulation with disk.frame, <em>ZJ</em></a></li>
+<li><a href="#your-public-garden">Your public garden, <em>Vicki Boykis</em></a></li>
+</ul>
+<div id="speeding-up-shiny" class="section level3">
+<h3>Speeding up Shiny, <em>Pedro Silva</em></h3>
+<p><em>Use update functions for faster Shiny apps</em></p>
+<p><a href="https://mastering-shiny.org/action-dynamic.html">Update functions</a> speed up Shiny apps by telling the browser to update an existing element, rather than replacing it completely. Shiny inputs each have a corresponding update function, and just this small change in the code can achieve large speed improvements per element (e.g. from ~15ms to ~10ms for the example below). For more complicated widgets such as <code>DT::datatable</code>, proxy functions should be used instead.</p>
+<div class="figure">
+<p><img src="images/update_function.png" /></p>
+<p class="caption">
+How to use an update function
+</p>
+</div>
+</div>
+<div id="shiny-open-source" class="section level3">
+<h3>Shiny Open Source, <em>Dominik Krzemiński</em></h3>
+<p><em>Dominik Krzemiński shared some of his favourite Shiny packages</em></p>
+<ul>
+<li><a href="https://deanattali.com/shinyjs/"><code>ShinyJS</code></a>: Perform common useful JavaScript actions in Shiny e.g. hiding elements, disabling input, delaying code execution</li>
+<li><a href="http://shinyapps.dreamrs.fr/shinyWidgets/"><code>shinyWidgets</code></a>: a big collection of nice, well-documented components to enhance apps</li>
+<li><a href="https://rinterface.github.io/bs4Dash/"><code>bs4Dash</code></a> - bootstrap skins for Shiny apps</li>
+<li><a href="https://rinterface.github.io/shinyMobile/"><code>shinyMobile</code></a> - helps create mobile-ready apps</li>
+<li><a href="https://github.com/Appsilon/shiny.semantic"><code>shiny.semantic</code></a> - create an alternative look for Shiny apps</li>
+<li><a href="https://github.com/daattali/shinycssloaders"><code>ShinyCSSLoaders</code></a>: Easily allows you to add loading animations to the outputs instead of greying them out, with just:</li>
+</ul>
+<pre class="r"><code>shinycssloaders::withSpinner(
+  plotOutput(&quot;plot&quot;)
+)</code></pre>
+<p>He also highlighted the <a href="https://github.com/nanxstats/awesome-shiny-extensions">nanxstats/awesome-shiny-extensions</a> GitHub repo from <a href="https://twitter.com/nanxstats">Nan Xiao</a> (sidenote: also the author of the theme I use for this blog!)</p>
+</div>
+<div id="shiny-best-practices" class="section level3">
+<h3>Best practices in developing Shiny apps, <em>Olga Mierzwa-Sulima</em></h3>
+<ul>
+<li><a href="https://shiny.rstudio.com/reference/shiny/1.5.0/moduleServer.html"><strong>shiny modules</strong></a> enable you to decompose your application, providing encapsulation, modularity, reusability, and the ability to test components.</li>
+<li><a href="https://adv-r.hadley.nz/r6.html"><strong>R6 classes</strong></a> provide an implementation of object-orientated programming in R. It introduces a clear system of getting the current state, operations, auxiliary functions and initial state of the object. Keep each class in a separate script, and store scripts in a directory separated from other code.</li>
+<li><strong>wahini/modules</strong> is an organisational unit for source code. It enforces rigour when defining dependencies, as you have to explicitly declare which functions or packages your code is using.</li>
+<li><a href="https://github.com/jimhester/lintr"><strong>lintr</strong></a> ensures high quality, automated tests through e.g. GitHub actions.</li>
+<li><a href="https://rstudio.github.io/rstudio-extensions/rstudio_project_templates.html"><strong>Project templates</strong></a> mean you don’t have to start from scratch every time - instead initialise project repos from a template that includes a simple shiny app with shiny modules, modules, unit tests and automatic tests set up</li>
+<li><strong>Development environments</strong> prevent projects interfering with each other and ensures the code produces the same result on different machines. Olga recommends Docker and <a href="https://rstudio.github.io/renv/articles/renv.html"><code>renv</code></a> for managing dev environments.</li>
+<li><strong>Testing</strong> is important - set up testing architecture early (start from a project template) so that you don’t forget, write at least some tests for each piece of code, and don’t accept pull requests that do not include or pass tests. Data validation should have the most tests. Olga recommends the <code>data.validator</code> package, which automatically generates reports from the tests.</li>
+<li><strong>Hallway usability test</strong> - get someone passing in the hallway to use the app. With five people, you can learn 85% of what there is to learn about usability problems!</li>
+</ul>
+</div>
+<div id="scaling-shiny" class="section level3">
+<h3>Scaling Shiny to thousands of users, <em>Damian Rodziewicz</em></h3>
+<p><em>Why Shiny apps get slow with many users and how to fix it</em></p>
+<p>Shiny is slower with more users because they share the servers. R is single-threaded, so when multiple users are sharing a single process, while one user does something, the other user cannot do anything. Each process uses the memory required for the application, so the amount of memory required scales with the number of users and processes.</p>
+<p>Speeding up Shiny servers by adding more CPU/memory or more servers is easy but costly. Slimming the Shiny app is more difficult and requires an understanding of why the application is slow, in order to identify bottlenecks and speed them up.</p>
+<p>Four ways to scale Shiny apps:</p>
+<ul>
+<li>Leverage the frontend (less CPU useage) - this means you don’t use the server to generate HTML that is sent back to the server</li>
+<li>Extract computations (less CPU useage) - if the app is doing something heavily, think about a way to extract it somewhere else</li>
+<li>Use a database (less memory and CPU usage) - query data from a database instead of reading it into memory</li>
+<li><a href="https://support.rstudio.com/hc/en-us/articles/231874748-Scaling-and-Performance-Tuning-in-RStudio-Connect">Tune one server</a> or add more servers</li>
+</ul>
+<p>Extra: I also saw this great tip on Damian’s Twitter:</p>
+<blockquote class="twitter-tweet tw-align-center">
+<p lang="en" dir="ltr">
+Tired of working in shiny and rerunning the app every time you do a change? Checkout options(shiny.autoreload = TRUE)
+</p>
+— Damian Rodziewicz (<span class="citation">@D_Rodziewicz</span>) <a href="https://twitter.com/D_Rodziewicz/status/1336582721934684160?ref_src=twsrc%5Etfw">December 9, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div id="maintaining-the-tidyverse" class="section level3">
+<h3>Maintaining the house the tidyverse built, <em>Hadley Wickham</em></h3>
+<p><em>The tidyverse life cycle and how to not have your code broken by updates</em></p>
+<p>Tidyverse updates bring improvements, new features and bug fixes, but sometimes they can introduce problems with existing R code. Hadley Wickham gave an overview of the Tidyverse life cycle, which tries to mitigate these problems. These are labels that indicate the stages of development, and can apply to functions, packages, arguments, and specific values of arguments.</p>
+<ul>
+<li><strong>Experimental</strong> - code that will change based on feedback</li>
+<li><strong>Stable</strong> - no plans to change, developers will avoid making breaking changes to this code</li>
+<li><strong>Deprecated</strong> - this was a bad idea, and you should stop using it, e.g. <code>tibble::data_frame()</code> replaced with <code>tibble()</code></li>
+<li><strong>Superceded</strong> - replaced with a new approach, development is complete and the code won’t be updated, but will continue to be maintained indefinitely. You should use best practice in new code and teaching, but superceded code will still be functional and won’t be removed. E.g. <code>gather()</code> and <code>spread()</code>, now superceded by <code>pivot_longer()</code> and <code>pivot_wider()</code>.</li>
+</ul>
+<p>“Breaking changes” include removing functions or arguments, restricting allowed inputs, or changing types of output. “Non-breaking changes” include adding arguments and functions, as well as fixing bugs; note that bug-fixes may still break code that inadvertantly depends on the bug.</p>
+<p>Breaking changes will happen gradually via deprecation. There will be a warning (not an error) printed once every eight hours to let you know that the function is deprecated, along with a guide for what to use instead.</p>
+<p>Developers will anticipate breaking changes by checking how code is used in CRAN and on GitHub, and try to fix these issues for cases that are widely used. CRAN packages have extra protection against breaking changes, as all the tests are rerun before updates.</p>
+<p>Off-label useage of functions refers to the use of functions for purposes not intended by the author. This should be avoided, as it is difficult to follow your intentions when reading code, and the author cannot anticipate your specific useage, making it more likely that updates may introduce problems with your code. The best way to avoid off-label useage is to read the documentation.</p>
+<p>Opting out of updates is generally not a good idea, but can be useful to protect unattended code e.g. code in production.</p>
+<p>You can use <a href="https://rstudio.github.io/renv/articles/renv.html"><code>renv</code></a> to isolate projects. It comes with functions that can save/load environents so they can be taken to a different computer, and works with all packages whether they are from CRAN, GitHub, or an internal package repository.</p>
+<p><a href="https://mran.microsoft.com/documents/rro/reproducibility#snapshots">CRAN time machine</a> is an alternative approach. It takes daily snapshot of CRAN, allowing you to select a specific day in the past and include the versions available on that day. This may be easier to set up if you are only interested in controlling CRAN packages.</p>
+<p>Hadley also shared some advice for dealing with frustration, based on the idea from Cognitive Behavioural Therapy (CBT) that sometimes changing your thoughts can change your emotions.</p>
+<blockquote class="twitter-tweet tw-align-center" data-dnt="true">
+<p lang="en" dir="ltr">
+Starting off <a href="https://twitter.com/hashtag/rstudioglobal?src=hash&amp;ref_src=twsrc%5Etfw">#rstudioglobal</a> with some thoughts from <a href="https://twitter.com/hadleywickham?ref_src=twsrc%5Etfw"><span class="citation">@hadleywickham</span></a> on mindset - relevant to research, to coding, and to learning! Reframing your thought process is such an important tool in making progress in anything (especially things you're learning to do). <a href="https://t.co/cD4zmPqLGh">pic.twitter.com/cD4zmPqLGh</a>
+</p>
+— Angela Li (<span class="citation">@CivicAngela</span>) <a href="https://twitter.com/CivicAngela/status/1352287857579335680?ref_src=twsrc%5Etfw">January 21, 2021</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p><br></p>
+<p><em>Summary of the Q&amp;A section</em></p>
+<ul>
+<li><p><em>Is there a cost to maintaining superceded packages?</em>
+There is very little overhead to incuding R code, the main cost is to the maintainer. We can’t promise that superceded code will be alive forever but we will do our best to keep them; reshape and reshape2 for example have been on CRAN for over a decade.</p></li>
+<li><p><em>Can these lifecycle labels apply to all packages in CRAN?</em>
+It’s a useful warranty for a team of professionals, but it may not be feasible for people who are not doing it professionally.</p></li>
+<li><p><em>Will magrittr be superceded with the base R update?</em>
+If you are using 4.0 I recommend using the base R pipe, but you will always be able to use magrittr pipe</p></li>
+<li><p><em>How do you recommend that a team implements code review?</em>
+Start small, set yourself some goals, find guidance on what a PR should look like (e.g. from <a href="https://google.github.io/eng-practices/review/">google engineering</a>). Look for guides that stress the emotional, emphathetic side; it’s not purely technical, it’s about relationship-building with colleagues, and you need to get to a point where everyone is happy to give and receive criticism.</p></li>
+<li><p><em>Is tidymodels an official part of the tidyverse? What about modelr?</em>
+tidymodels is totally part of the tidyverse, but it is not included in the tidyverse itself because it is large. Modelr is basically superceded.</p></li>
+<li><p><em>Do you feel like it was a mistake to make tidyverse and dplyr so dependent on non-standard evaluation?</em>
+Absolutely not. Ambiguity adds challenges, but allows much a more fluid analysis environment where you don’t have to be very explicit about everything.</p></li>
+<li><p><em>What are the advantages of renv over docker for package development?</em>
+It’s not a case of versus - docker is in charge of giving an OS/machine that is standardised, renv is for managing package versions. For most people, renv is adequate.</p></li>
+<li><p><em>What are your tips for avoiding burnout while maintaining widely used open source projects?</em>
+Maintain laser focus on one thing at a time, because the cost of context-switching is very high. Make sure you get time off - you’ll be vastly more productive when you come back.</p></li>
+</ul>
+</div>
+<div id="ggplot-misunderstandings" class="section level3">
+<h3>Always look on the bright side of plots, <em>Kara Woo</em></h3>
+<p><em>Common misunderstandings/errors with ggplot</em></p>
+<p>Scale transformation happens before statistical summaries. When using <code>scale_x_continuous(limits = c(min, max))</code> the points outside the limits are converted to <code>NA</code> before the statistical summaries are calculated. Instead, use <code>coord_cartesian(xlim =c(min, max))</code> to zoom in on the plot, and the points outside will still be included in the statistical summaries.
+<img src=""></p>
+<div class="figure">
+<p><img src="images/ggplot_kara_woo.png" /></p>
+<p class="caption">
+Plotting statistical summaries using <code>scale_x_continuous()</code> (left) and <code>coord_cartesian()</code> (right)
+</p>
+</div>
+</div>
+<div id="trial-and-error-dataviz-at-ACLU" class="section level3">
+<h3>Trial and error in data viz at the ACLU, <em>Sophie Beiers</em></h3>
+<p><em>Sophie Beiers, a data journalist at the ACLU, described how the process of data analysis to visualisation is not linear or simple</em></p>
+<p>As a case study, she talked us through one of her visualisation projects from 2020, visualising the data that showed there was no relationship between the reduction in jail populations in response to the COVID-19 pandemic, and the amount of crime in the jail’s surrounding area.</p>
+<p>The first step is gathering and exploring the data. Sophie uses <code>tidyverse</code>, <code>janitor</code> (for tables) and <code>ggplot2</code> for exploration. Next, what are the main points you want to visualise, and does your visualisation highlight your main points? Consider the audience - do they know about the topic already? When getting feedback, be specific about the main points and ask whether these points are coming through. Feedback from different audiences may conflict - it’s important to get feedback from the intended audience of the visualisation. While feedback can be hard to receive, it’s our job to make sure people can understand our plots. If it’s not working, it’s important to ask why - it might be surprising.</p>
+</div>
+<div id="sql-and-r" class="section level3">
+<h3>SQL &amp; R: The dynamic duo, <em>Irene Steves</em></h3>
+<p><em>Irene Steves shared a useful summary of the equivalent tidyverse functions and SQL commands</em></p>
+<p>How to decide which IDE to use? RStudio is useful for R formatting, suggestions, highlighting, visualisations and reporting, project organisation and version control. A dedicated SQL IDE provides auto-formatting and syntax highlighting for SQL, code/field suggestions, and makes it easy to stop bad queries.</p>
+<div class="figure">
+<p><img src="images/SQL_tidyverse.png" /></p>
+<p class="caption">
+tidyverse functions vs SQL commands cheatsheet
+</p>
+</div>
+</div>
+<div id="visualising-the-pandemic" class="section level3">
+<h3>Reporting on and visualising the pandemic, <em>John Burn-Murdoch</em></h3>
+<p><em>John shared the lessons he has learnt from a year of covering the pandemic</em></p>
+<p>I was really excited about John Burn-Murdoch’s keynote, as I’ve been following his team’s visual coverage of the pandemic in the Financial Times (as has the rest of the world). If you haven’t already, I really recommend taking a look at their visual piece <a href="https://ig.ft.com/coronavirus-global-data/">“Covid-19: The global crisis - in data”</a>.</p>
+<ol style="list-style-type: decimal">
+<li><strong>Text is your secret weapon.</strong> Annotations are extremely valuable to guide the audience to the message of the chart. People don’t study every data point on visualisations – especially ‘non-chart people’ – they will take away the title and the key message.</li>
+<li><strong>A confused reader means a bad chart; anticipate confusion and include explanations in situ.</strong>
+Example: Early in the pandemic, using a log scale to visualise the trajectories between different countries was appropriate but caused confusion for some readers. By explaining the log scale in a Twitter thread and staying in the conversation, John was able to improve peoples’ understanding of the chart.</li>
+<li><strong>Consider the emotional and political context.</strong>
+Data visualisation is personal and political, especially for partisan issues, and people bring their existing beliefs to the chart. While some people will look at the numbers analytically, others will take a single overarching message from the chart: things are good or things are bad. Keep that in mind, and try to minimise the risk that people have a negative reaction because of a design choice (but if they object to the data, that’s on them).</li>
+<li><strong>Stick around, don’t just publish and vanish.</strong> If we want to do the best we can, and effectively reach as many people as possible, then communication is critical. Explicitly asking for feedback on your charts will improve the quality of the feedback, and criticism will be more constructive.</li>
+<li><strong>Ease of understanding has to come first.</strong> Trying to be too clever with visualisation can make it more difficult to understand and lose your audience’s trust.
+Example: Seven-day rolling average plots smoothed noisy data, but meant the final data point didn’t match the numbers in the day’s headlines. This could be improved using a smoothing spline, but this approach was harder for the average reader to understand compared to a rolling average.</li>
+<li><strong>Use animation to build and release tension.</strong> Used sparingly, animations can tell a story more effectively than a static chart by harnessing the surprise factor. Example: An animated chart of ICU admissions for past flu seasons compared to the COVID-19 pandemic was extremely powerful for dispelling the myth that 2020 was the same as a normal winter, and reached more than 10 milllion people.</li>
+</ol>
+<blockquote class="twitter-tweet tw-align-center">
+<p lang="en" dir="ltr">
+NEW: a common response to reports of hospitals struggling this winter is “it’s no different to a bad flu season!”<br><br>I’ve tracked down historical data on flu ICU admissions, including winter 2017-18, a record high.<br><br>Here’s how England’s Covid winter compares to a bad flu season 📹 <a href="https://t.co/tsExrDZM31">pic.twitter.com/tsExrDZM31</a>
+</p>
+— John Burn-Murdoch (<span class="citation">@jburnmurdoch</span>) <a href="https://twitter.com/jburnmurdoch/status/1347200811303055364?ref_src=twsrc%5Etfw">January 7, 2021</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>John’s call to action: We need more resources to help people refine dataviz as communication rather than a technical exercise. Let’s make charts for everyone, not just for chart people.</p>
+<p><em>Summary of the Q&amp;A section</em></p>
+<p>The FT had a large team working on the data pipeline and getting data from a huge range of sources from curated sources such as <a href="https://coronavirus.jhu.edu/region">John Hopkins</a> and <a href="https://ourworldindata.org/coronavirus">Our World in Data</a>, to scraping PDFs and handwriting numbers from press conferences.</p>
+<p>All data processing and drafting of charts is carried out in ggplot2, but (mainly due to strict visual guidelines for the FT) the final figures are made in either <a href="https://d3js.org/">D3</a>, or ggplot2 with post-production in Illustrator. D3 has a steep learning curve but is a free tool.</p>
+<p>John’s experience with journalism and charts began while completing a degree in Geography; he then went on to work on a data journalism project for the Guardian with LSE, before joining the Guardian data blog team.</p>
+<p>The FT now recruit people from a broad range of quantitative backgrounds, and the data team are increasingly working with R and the tidyverse.</p>
+<p>John gets inspiration for visualisations by consuming as broadly as possible, including dataviz books, and especially twitter to see what people are finding interesting.</p>
+</div>
+<div id="whats-new-in-tidymodels" class="section level3">
+<h3>What’s new in tidymodels, <em>Max Kuhn</em></h3>
+<p><em>New methods for parameter optimisation</em></p>
+<p>There have been new updates to <a href="https://www.tidymodels.org/"><code>tidymodels</code></a> over the past six months, including two new ways of finding optimal values for parameters that cannot be directly calculated from the data. Using the <code>finetune</code> package, the parameters can be optimised using a racing approach (which uses interim analyses to eliminate candidate parameters that have a low probability of being the best) or simulated annealing (a biased random walk around the tuning parameter space, in which steps that worsen the model results are accepted with a probability that decreases as the search continues).</p>
+</div>
+<div id="making-shiny-apps-faster-with-caching" class="section level3">
+<h3>Making Shiny apps faster with caching, <em>Winston Chang</em></h3>
+<p>Shiny 1.6.0 has a new function, <a href="https://rdrr.io/github/rstudio/shiny/man/bindCache.html"><code>bindCache()</code></a>, that makes it easy to dramatically speed up reactive expressions and output rendering functions. It allows many applications to scale up to serve several times more users without an increase in server resources.</p>
+<div class="figure">
+<p><img src="images/caching.png" /></p>
+<p class="caption">
+A slide from Winston Chang’s presentation, with details about caching
+</p>
+</div>
+</div>
+<div id="disk-frame" class="section level3">
+<h3>Easy larger-than-RAM data manipulation with disk.frame, <em>ZJ</em></h3>
+<p>The <a href="https://github.com/xiaodaigh/disk.frame"><code>disk.frame</code></a> package provides a framework for manipulating datatables that are larger than RAM and can’t be held in memory at once. Instead of reading the entire large dataset into memory, <code>disk.frame</code> breaks it into smaller ‘chunks’ stored as <a href="https://fstpackage.org"><code>fst</code></a> files. Manipulations can then be performed on each individual chunk in parallel, and <code>disk.frame</code> supports most <code>dplyr</code> verbs.</p>
+</div>
+<div id="your-public-garden" class="section level3">
+<h3>Your public garden, <em>Vicki Boykis</em></h3>
+<p><a href="https://twitter.com/vboykis">Vicki Boykis</a> is a machine learning engineer at Automattic, author of the newsletter <a href="https://vicki.substack.com/">Normcore Tech</a>, and one of the most valuable tweeters on my timeline. In her keynote, Vicki shared her experience on the importance of cultivating your own digital space online. I didn’t make any notes for this talk (too busy internalising!) but <a href="https://docs.google.com/presentation/d/1RZqE43Y3fWEExGwL3jAZD7uQPDUnt53UZj0GgWo6RtQ/edit#slide=id.g6fe1a5a715_4_4744">her slides and notes are available here</a>, and I really recommend listening to the full talk.</p>
+</div>
